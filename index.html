@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+
+
+<script>
+
+    funcText = csv('10,27,Львів,2\n10,228,Кропивницький,1\n10,20,Київ,3\n#\n\n');
+
+    console.log(funcText("Київ, Львів, Кропивницький"))
+
+    function csv(csv) {
+        const cities = csv
+            .split('\n')
+            .filter(function (value) {
+                return value !== '' && value[0] !== '#'
+            })
+            .map(function (value) {
+                let keys = ['x', 'y', 'name', 'population']
+                return value.split(',').reduce(function (acc, value, index) {
+                    acc[keys[index]] = value
+                    return acc
+                }, {})
+            })
+            .sort(function (a, b) {
+                return +b['population'] - +a['population'];
+            })
+            .slice(0, 10)
+            .reduce(function (acc, value, index) {
+                acc[value['name']] = {'population': value['population'], 'rating': index + 1}
+                return acc
+            }, {});
+
+
+        return function (text) {
+           return Object.keys(cities).reduce(function (acc, val) {
+                if(acc === '') {
+                    acc = text
+                }
+
+                acc = acc.replace(
+                    new RegExp(val, 'gi'),
+                    `${val} (${cities[val].rating} место в ТОП-10 самых крупных городов Украины, население ${cities[val].population} человек)`
+                );
+                return acc;
+            }, '')
+        }
+    }
+</script>
+</html>
